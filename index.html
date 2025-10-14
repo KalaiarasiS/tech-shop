@@ -292,8 +292,106 @@
             font-size: 5rem;
             margin-bottom: 20px;
         }
+        
+        .cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(45, 55, 72, 0.98);
+            color: white;
+            padding: 25px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            animation: slideUp 0.4s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+        
+        .cookie-banner.show {
+            display: block;
+        }
+        
+        .cookie-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .cookie-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .cookie-text h3 {
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .cookie-text p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+        
+        .cookie-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .cookie-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .cookie-accept {
+            background: #667eea;
+            color: white;
+        }
+        
+        .cookie-accept:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        
+        .cookie-decline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .cookie-decline:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .cookie-settings {
+            background: transparent;
+            color: #667eea;
+            text-decoration: underline;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
     </style>
- </head>
+</head>
 <body>
     <header>
         <nav>
@@ -501,6 +599,21 @@
         <p>Sample website for Adobe Analytics learning purposes</p>
     </footer>
 
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" class="cookie-banner">
+        <div class="cookie-content">
+            <div class="cookie-text">
+                <h3>🍪 We Value Your Privacy</h3>
+                <p>We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies. You can manage your preferences or learn more in our Cookie Policy.</p>
+            </div>
+            <div class="cookie-buttons">
+                <button class="cookie-btn cookie-settings" onclick="openCookieSettings()">Customize</button>
+                <button class="cookie-btn cookie-decline" onclick="declineCookies()">Decline</button>
+                <button class="cookie-btn cookie-accept" onclick="acceptCookies()">Accept All</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let cart = [];
 
@@ -639,6 +752,61 @@
 
         // Initialize cart count on page load
         updateCartCount();
+
+        // Cookie Consent Functions
+        function checkCookieConsent() {
+            const consent = getCookiePreference('cookieConsent');
+            if (!consent) {
+                // Show banner after a short delay
+                setTimeout(() => {
+                    document.getElementById('cookie-banner').classList.add('show');
+                }, 1000);
+            }
+        }
+
+        function acceptCookies() {
+            setCookiePreference('cookieConsent', 'accepted');
+            document.getElementById('cookie-banner').classList.remove('show');
+            
+            // Track cookie acceptance
+            console.log('Cookie Consent: Accepted');
+            
+            // Here you would typically initialize your analytics and tracking scripts
+            alert('Thank you! Cookies accepted. Analytics tracking enabled.');
+        }
+
+        function declineCookies() {
+            setCookiePreference('cookieConsent', 'declined');
+            document.getElementById('cookie-banner').classList.remove('show');
+            
+            // Track cookie decline
+            console.log('Cookie Consent: Declined');
+            
+            alert('Cookies declined. Only essential cookies will be used.');
+        }
+
+        function openCookieSettings() {
+            // Track cookie settings opened
+            console.log('Cookie Settings: Opened');
+            
+            alert('Cookie Settings:\n\n✓ Essential Cookies (Always Active)\n□ Analytics Cookies\n□ Marketing Cookies\n□ Preference Cookies\n\nThis is a demo. In a real site, you would show a detailed settings modal here.');
+        }
+
+        // Helper functions to store preferences in memory
+        const cookiePreferences = {};
+        
+        function setCookiePreference(key, value) {
+            cookiePreferences[key] = value;
+        }
+
+        function getCookiePreference(key) {
+            return cookiePreferences[key];
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            checkCookieConsent();
+        });
     </script>
 </body>
 </html>
